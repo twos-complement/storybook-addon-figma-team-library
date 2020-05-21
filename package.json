@@ -1,0 +1,28 @@
+{
+  "name": "storybook-addon-figma-team-library",
+  "version": "1.0.0",
+  "description": "Storybook addon that show Figma Team Library components.",
+  "main": "dist/register.js",
+  "scripts": {
+    "build": "babel src -d dist"
+  },
+  "author": "2C | Two's Complement",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.9.6",
+    "@babel/preset-env": "^7.9.6",
+    "@babel/preset-react": "^7.9.4",
+    "babel-plugin-styled-components": "^1.10.7"
+  },
+  "peerDependencies": {
+    "react": "*"
+  },
+  "dependencies": {
+    "@storybook/addons": "^5.3.18",
+    "@storybook/api": "^5.3.18",
+    "@storybook/components": "^5.3.18",
+    "moment": "^2.26.0",
+    "styled-components": "^5.1.0"
+  }
+}

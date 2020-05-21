@@ -1,0 +1,33 @@
+{
+  "Import Styled Components": {
+    "prefix": "ims",
+    "body": ["import styled from 'styled-components'"],
+    "description": "Import Styled Components"
+  },
+  "Styled-Components H1": {
+    "prefix": "sch1",
+    "body": ["const ${1:Component} = styled.h1`", "  ${2:contents}", "`"],
+    "description": "Styled-Components H1"
+  },
+  "Styled-Components Component": {
+    "prefix": "scc",
+    "body": [
+      "const ${1:componentName} = styled.${2:tag}`",
+      "  ${3:contents}",
+      "`"
+    ],
+    "description": "Styled-Components Component"
+  },
+  "Styled-Components File Component": {
+    "prefix": "scfc",
+    "body": [
+      "import styled from 'styled-components'",
+      "",
+      "const ${TM_FILENAME_BASE} = styled.${1:tag}`",
+      "  ${2:contents}",
+      "`",
+      "export default ${TM_FILENAME_BASE}"
+    ],
+    "description": "Styled-Components File Component"
+  }
+}
