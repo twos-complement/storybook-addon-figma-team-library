@@ -4,51 +4,69 @@ import moment from 'moment'
 import styled from 'styled-components'
 
 import FigmaApiContext from '../contexts/FigmaApiContext'
+import FigmaComponent from './ui/FigmaComponent'
 
 const Wrapper = styled.div`
   padding: 20px;
+
+  img {
+    padding-bottom: 40px;
+  }
 `
 
 const ActiveComponent = () => {
   const { api } = useContext(FigmaApiContext)
   const figma = useParameter('figma')
-  const [component, setComponent] = useState()
+  const [components, setComponents] = useState()
 
   useEffect(() => {
-    setComponent(null)
+    setComponents(null)
     ;(async () => {
-      if (!figma || !figma.key) return
-      // Fetch component meta:
-      let data = await api.fetchComponent({ key: figma.key })
-      // Use component meta to fetch scaled image:
-      let imageSrc = await api.fetchImage({
-        file_key: data.file_key,
-        node_id: data.node_id,
-      })
-      // Set component data to state:
-      setComponent({ ...data, imageSrc })
+      if (!figma || !figma.keys) return
+      // Fetch components meta:
+      let componentsData = await api.fetchComponentDetails({ keys: figma.keys })
+      // Set components data to state:
+      setComponents(componentsData)
     })()
-  }, [figma && figma.key])
+  }, [figma && figma.keys])
 
   //TODO: add instructions to add the key to story:
-  if (!figma || !figma.key) {
-    return <p>Not linked to a Figma Team Library Component.</p>
+  if (!figma || !figma.keys) {
+    return (
+      <Wrapper>
+        <p>Not linked to any Figma Team Library Components.</p>
+      </Wrapper>
+    )
   }
 
-  if (!component) {
-    return <p>Loading Component...</p>
+  if (!components) {
+    return (
+      <Wrapper>
+        <p>Loading Components...</p>
+      </Wrapper>
+    )
   }
 
   return (
     <Wrapper>
-      <h2>
-        {component.name} &gt; {component.description}
-      </h2>
-      <img src={component.imageSrc} />
-      <p>
-        {component.user.handle} last updated{' '}
-        {moment(new Date(component.updated_at)).fromNow()}
-      </p>
+      {components.map(component => (
+        <div key={component.key}>
+          <h2>
+            {component.name} &gt; {component.description}
+          </h2>
+          <p>
+            {component.user.handle} last updated{' '}
+            {moment(new Date(component.updated_at)).fromNow()}
+          </p>
+          <FigmaComponent
+            background={
+              component.containing_frame &&
+              component.containing_frame.backgroundColor
+            }
+            imgSrc={component.imageSrc}
+          />
+        </div>
+      ))}
     </Wrapper>
   )
 }

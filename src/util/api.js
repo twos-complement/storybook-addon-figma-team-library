@@ -3,9 +3,10 @@ export default class Api {
     this.figmaKey = figmaKey
   }
 
-  async fetchComponents({ figmaTeamId }) {
+  async fetchComponents({ figmaFileId }) {
+    // TODO: paginate like a normal person
     const resp = await fetch(
-      `https://api.figma.com/v1/teams/${figmaTeamId}/components?page_size=1000`,
+      `https://api.figma.com/v1/files/${figmaFileId}/components?page_size=1000`,
       {
         method: 'GET',
         headers: {
@@ -17,15 +18,35 @@ export default class Api {
     return data.meta.components
   }
 
-  async fetchComponent({ key }) {
-    const resp = await fetch(`https://api.figma.com/v1/components/${key}`, {
-      method: 'GET',
-      headers: {
-        'X-FIGMA-TOKEN': this.figmaKey,
-      },
-    })
-    const data = await resp.json()
-    return data.meta
+  async fetchComponentDetails({ keys }) {
+    const components = []
+
+    for (var i = 0; i < keys.length; i++) {
+      // Fetch component meta by key:
+      const resp = await fetch(
+        `https://api.figma.com/v1/components/${keys[i]}`,
+        {
+          method: 'GET',
+          headers: {
+            'X-FIGMA-TOKEN': this.figmaKey,
+          },
+        },
+      )
+      const data = await resp.json()
+
+      // Use component meta to fetch scaled image:
+      const imageSrc = await this.fetchImage({
+        file_key: data.meta.file_key,
+        node_id: data.meta.node_id,
+      })
+
+      components.push({
+        ...data.meta,
+        imageSrc,
+      })
+    }
+
+    return components
   }
 
   async fetchImage({ file_key, node_id }) {
